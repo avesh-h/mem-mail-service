@@ -7,4 +7,5 @@ module.exports = {
   REFRESH_TOKEN: process.env.REFRESH_TOKEN,
   REDIRECT_URI: process.env.REDIRECT_URI,
   VERIFICATION_SECRET: process.env.VERIFICATION_SECRET,
+  AUTH_SERVICE: process.env.AUTH_SERVICE,
 };
