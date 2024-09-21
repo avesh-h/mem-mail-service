@@ -27,12 +27,7 @@ const verificationOfUser = async (req, res) => {
 
 const emailService = async (payload) => {
   try {
-    const emailBody = {
-      ...payload,
-      email: payload?.email,
-      html: `<h4>You've created post successfully please click on the link to view <a href="http://localhost:3000/posts">${payload?.name}</a><h4>`,
-    };
-    await mailService.emailService(emailBody);
+    await mailService.emailService(payload);
   } catch (error) {
     throw error;
   }

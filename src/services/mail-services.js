@@ -7,12 +7,7 @@ const { VERIFICATION_SECRET, AUTH_SERVICE } = require("../config/serverConfig");
 class MailServices {
   async emailService(payload) {
     try {
-      const emailBody = {
-        ...payload,
-        email: payload?.email,
-        html: `<h4>You've created post successfully please click on the link to view <a href="http://localhost:3000/posts">${payload?.name}</a><h4>`,
-      };
-      const response = await sendMail(emailBody);
+      const response = await sendMail(payload);
       return response;
     } catch (error) {
       throw error;
