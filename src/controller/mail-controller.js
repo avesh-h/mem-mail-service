@@ -1,7 +1,5 @@
-const axios = require("axios");
 const sendMail = require("../utils/oAuth");
-const jwt = require("jsonwebtoken");
-const { VERIFICATION_SECRET, AUTH_SERVICE } = require("../config/serverConfig");
+const mailService = require("../services/mail-services");
 
 const sendVerificationEmailToUser = async (req, res) => {
   const verificationDetails = req.body;
@@ -18,14 +16,7 @@ const verificationOfUser = async (req, res) => {
   const { token, email } = req.query;
   try {
     if (email && token) {
-      //Decode the token
-      const decoded = jwt.verify(token, VERIFICATION_SECRET);
-      //get email from the token
-      const response = await axios.get(
-        `${AUTH_SERVICE}/api/v1/user/update-verification?user=${encodeURIComponent(
-          email || decoded?.email
-        )}`
-      );
+      const response = await mailService.tokenVerification(token, email);
       // TODO : Make user to redirect to login page after verification complete.
       return res.status(200).send(response.data);
     }
@@ -34,4 +25,21 @@ const verificationOfUser = async (req, res) => {
   }
 };
 
-module.exports = { verificationOfUser, sendVerificationEmailToUser };
+const emailService = async (payload) => {
+  try {
+    const emailBody = {
+      ...payload,
+      email: payload?.email,
+      html: `<h4>You've created post successfully please click on the link to view <a href="http://localhost:3000/posts">${payload?.name}</a><h4>`,
+    };
+    await mailService.emailService(emailBody);
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  verificationOfUser,
+  sendVerificationEmailToUser,
+  emailService,
+};

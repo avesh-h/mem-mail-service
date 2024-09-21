@@ -18,7 +18,7 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 //Our main function for sendMail
-const sendMail = async ({ email, message, verificationLink = "" }) => {
+const sendMail = async (options) => {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -36,12 +36,14 @@ const sendMail = async ({ email, message, verificationLink = "" }) => {
     });
     //Details of the mail
     const mailOptions = {
-      from: "MEMORIES APP SUPPORT TEAM <aveshhasanfatta1155+memories.support@gmail.com>", //Sender
-      to: email,
-      subject: "Email Verification",
-      text: message,
-      ...(!!verificationLink && {
-        html: `<h1>Verification Link : ${verificationLink}</h1>`,
+      from:
+        options?.from ||
+        "MEMORIES APP SUPPORT TEAM <aveshhasanfatta1155+memories.support@gmail.com>", //Sender
+      to: options?.email,
+      subject: options?.subject || "Email Verification",
+      text: options?.message,
+      ...(!!options?.html && {
+        html: options?.html,
       }),
     };
     const result = await transport.sendMail(mailOptions);

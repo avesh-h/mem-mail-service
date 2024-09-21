@@ -3,7 +3,8 @@ const { PORT } = require("./config/serverConfig");
 const cors = require("cors");
 const serverRoutes = require("./routes/index");
 const bodyParser = require("body-parser");
-const { createChannel } = require("./utils/messageQueue");
+const { createChannel, subscribeToMessage } = require("./utils/messageQueue");
+const { emailService } = require("./controller/mail-controller");
 
 const setupAndStartServer = async () => {
   const app = express();
@@ -18,6 +19,9 @@ const setupAndStartServer = async () => {
   // So these are the both approach the way we can pass this common channel in the whole project accssible in routes and controllers. first here and second in the post service.
 
   app.locals.channel = channel;
+
+  //Subscribe to post events it will keep looking for event from other services.
+  await subscribeToMessage(channel, "post_service", emailService);
 
   app.use("/api", serverRoutes);
 

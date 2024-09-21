@@ -25,8 +25,10 @@ const subscribeToMessage = async (channel, binding_key, service) => {
     channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
 
     channel.consume(applicationQueue.queue, (msg) => {
-      console.log("msggggg", msg?.content?.toString());
-      //   channel.ack("Message received!!");
+      let message = JSON.parse(msg?.content?.toString());
+      // Acknowledge the message
+      service(message);
+      channel.ack(msg);
     });
   } catch (error) {
     console.log("SUBSCRIBE_MESSAGE:::::::", error);
