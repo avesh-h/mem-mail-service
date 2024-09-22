@@ -2,7 +2,6 @@ const axios = require("axios");
 const sendMail = require("../utils/oAuth");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/errors/error-handler");
-const { VERIFICATION_SECRET, AUTH_SERVICE } = require("../config/serverConfig");
 
 class MailServices {
   async emailService(payload) {
@@ -14,15 +13,11 @@ class MailServices {
     }
   }
 
-  async tokenVerification(token, email) {
+  async tokenVerification(token, email, url, secret) {
     try {
-      const decoded = jwt.verify(token, VERIFICATION_SECRET);
+      const decoded = jwt.verify(token, secret);
       //get email from the token
-      const response = await axios.get(
-        `${AUTH_SERVICE}/api/v1/user/update-verification?user=${encodeURIComponent(
-          email || decoded?.email
-        )}`
-      );
+      const response = await axios.get(url);
       return response;
     } catch (error) {
       throw new AppError(
